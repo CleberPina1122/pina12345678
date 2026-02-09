@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: carbi
+      POSTGRES_PASSWORD: carbi
+      POSTGRES_DB: carbi_play
+    ports: ["5432:5432"]
+    volumes: [carbi_pg:/var/lib/postgresql/data]
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://carbi:carbi@postgres:5432/carbi_play
+      JWT_SECRET: "dev-change-me"
+      CORS_ORIGINS: "http://localhost:5173"
+      ADMIN_EMAIL: "admin@carbi.play"
+      ADMIN_PASSWORD: "admin123"
+    ports: ["8000:8000"]
+    depends_on: [postgres]
+
+  admin:
+    build: ./admin
+    environment:
+      VITE_API_URL: "http://localhost:8000"
+    ports: ["5173:5173"]
+    depends_on: [backend]
+
+volumes:
+  carbi_pg:
