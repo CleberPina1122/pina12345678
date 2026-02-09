@@ -3,7 +3,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
-from sqlmodel import Session, select
+from sqlmodel import Session
 from .settings import settings
 from .models import User
 from .db import get_session
@@ -33,10 +33,15 @@ def decode_token(token: str):
     except JWTError:
         raise HTTPException(status_code=401, detail="Token inválido")
 
-def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)) -> User:
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    session: Session = Depends(get_session),
+) -> User:
     payload = decode_token(token)
-    user_id = int(payload.get("sub"))
-    user = session.get(User, user_id)
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Token inválido")
+    user = session.get(User, int(user_id))
     if not user:
         raise HTTPException(status_code=401, detail="Usuário não encontrado")
     return user
