@@ -1,9 +1,15 @@
 from sqlmodel import SQLModel, create_engine, Session
 from .settings import settings
 
-engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
+DATABASE_URL = settings.DATABASE_URL
 
-def init_db():
+engine = create_engine(
+    DATABASE_URL,
+    echo=False,
+    pool_pre_ping=True,
+)
+
+def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 def get_session():
