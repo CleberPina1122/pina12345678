@@ -1,20 +1,26 @@
-import * as React from "react";
-import { Admin, Resource } from "react-admin";
-import simpleRestProvider from "ra-data-simple-rest";
-import { API_URL, authProvider, authFetch } from "./api";
+import React from 'react';
+import { Admin, Resource } from 'react-admin';
+import jsonServerProvider from 'ra-data-json-server';
+import { PostList, PostEdit, PostCreate } from './components/PostComponents';
 
-import { UserList } from "./resources/users";
-import { ChannelList, ChannelEdit } from "./resources/channels";
-import { DeviceList } from "./resources/devices";
+const dataProvider = jsonServerProvider('http://localhost:8000'); // URL do backend
 
-const dataProvider = simpleRestProvider(API_URL, authFetch);
+const authProvider = {
+  login: ({ username, password }: { username: string; password: string }) => {
+    return Promise.resolve();
+  },
+  logout: () => Promise.resolve(),
+  checkError: (error: any) => Promise.resolve(),
+  checkAuth: () => Promise.resolve(),
+  getPermissions: () => Promise.resolve(),
+};
 
-export default function App() {
+const App = () => {
   return (
-    <Admin title="Carbi Play Admin" dataProvider={dataProvider} authProvider={authProvider as any} requireAuth>
-      <Resource name="admin/users" options={{ label: "Usuários" }} list={UserList} />
-      <Resource name="admin/channels" options={{ label: "Canais" }} list={ChannelList} edit={ChannelEdit} />
-      <Resource name="admin/devices" options={{ label: "Dispositivos" }} list={DeviceList} />
+    <Admin dataProvider={dataProvider} authProvider={authProvider}>
+      <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} />
     </Admin>
   );
-}
+};
+
+export default App;

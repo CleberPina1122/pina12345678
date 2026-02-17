@@ -5,8 +5,10 @@ services:
       POSTGRES_USER: carbi
       POSTGRES_PASSWORD: carbi
       POSTGRES_DB: carbi_play
-    ports: ["5432:5432"]
-    volumes: [carbi_pg:/var/lib/postgresql/data]
+    ports:
+      - "5432:5432"
+    volumes:
+      - carbi_pg:/var/lib/postgresql/data
 
   backend:
     build: ./backend
@@ -16,15 +18,19 @@ services:
       CORS_ORIGINS: "http://localhost:5173"
       ADMIN_EMAIL: "admin@carbi.play"
       ADMIN_PASSWORD: "admin123"
-    ports: ["8000:8000"]
-    depends_on: [postgres]
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
 
   admin:
     build: ./admin
     environment:
       VITE_API_URL: "http://localhost:8000"
-    ports: ["5173:5173"]
-    depends_on: [backend]
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 
 volumes:
   carbi_pg:
