@@ -1,15 +1,16 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 
-app = FastAPI(title="Ferrovias API")
+app = FastAPI(title="API de Ferrovias")
 
-@app.get("/")
-def root():
-    return {"status": "API rodando 🚀"}
+# Classe para validar os dados de login
+class LoginData(BaseModel):
+    username: str
+    password: str
 
-@app.get("/meu")
-def meu():
-    return {"eu ia": "usuário", "e-mail": "usuário.email", "é_admin": "usuário_é_admin"}
-
-@app.get("/admin")
-def admin():
-    return {"status": "acesso admin liberado"}
+@app.post("/login")
+async def login(data: LoginData):
+    if data.username == "admin" and data.password == "senha":
+        return {"message": "Login bem-sucedido!"}
+    else:
+        return {"message": "Credenciais inválidas!"}
