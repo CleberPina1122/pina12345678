@@ -8,6 +8,7 @@ class LoginData(BaseModel):
     username: str
     password: str
 
+# Rota POST para login
 @app.post("/login")
 async def login(data: LoginData):
     if data.username == "admin" and data.password == "senha":
